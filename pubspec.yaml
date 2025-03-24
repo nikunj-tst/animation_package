@@ -1,6 +1,6 @@
 name: animated_toast_demo
 description: "An animated toast package for flutter"
-version: 0.0.1
+version: 0.0.2
 homepage: https://github.com/nikunj-tst/animation_package.git
 
 environment:
