@@ -1,7 +1,7 @@
 name: animated_toast_demo
 description: "A new Flutter project."
 version: 0.0.1
-homepage:
+homepage: https://github.com/nikunj-tst/animation_package.git
 
 environment:
   sdk: ^3.6.1
