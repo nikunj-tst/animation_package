@@ -1,4 +1,5 @@
 import 'package:animated_toast_demo/animated_toast_demo.dart';
+import 'package:bot_toast/bot_toast.dart';
 import 'package:flutter/material.dart';
 
 void main() {
@@ -11,11 +12,13 @@ class MyApp extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return MaterialApp(
-      title: 'Flutter Demo',
+      builder: BotToastInit(),
+      navigatorObservers: [BotToastNavigatorObserver()],
+      title: 'Animated Demo',
       theme: ThemeData(
         colorScheme: ColorScheme.fromSeed(seedColor: Colors.deepPurple),
       ),
-      home: const MyHomePage(title: 'Flutter Demo Home Page'),
+      home: const MyHomePage(title: 'Flutter'),
     );
   }
 }
@@ -29,7 +32,13 @@ class MyHomePage extends StatefulWidget {
   State<MyHomePage> createState() => _MyHomePageState();
 }
 
-class _MyHomePageState extends State<MyHomePage> {
+class _MyHomePageState extends State<MyHomePage> with TickerProviderStateMixin {
+  @override
+  void initState() {
+    ToastManager().initialize(this);
+    super.initState();
+  }
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -40,21 +49,33 @@ class _MyHomePageState extends State<MyHomePage> {
       body: Center(
         child: Column(
           mainAxisAlignment: MainAxisAlignment.center,
-          children: <Widget>[],
+          children: <Widget>[
+            ElevatedButton(
+              onPressed: () {
+                ToastManager().showSuccess(
+                  context,
+                  headerMsg: 'Success',
+                  description: 'Success Test Toast',
+                  isSuccess: true,
+                );
+              },
+              child: Text("Success Toast"),
+            ),
+            SizedBox(height: 20),
+            ElevatedButton(
+              onPressed: () {
+                ToastManager().showSuccess(
+                  context,
+                  headerMsg: 'Failed',
+                  description: 'Fail Test Toast',
+                  isSuccess: false,
+                );
+              },
+              child: Text("Failed Toast"),
+            ),
+          ],
         ),
       ),
-      floatingActionButton: FloatingActionButton(
-        onPressed: () {
-          ToastManager().showSuccess(
-            context,
-            headerMsg: 'Hello',
-            description: 'Test Toast',
-            isSuccess: true,
-          );
-        },
-        tooltip: 'Increment',
-        child: const Icon(Icons.add),
-      ), // This trailing comma makes auto-formatting nicer for build methods.
     );
   }
 }

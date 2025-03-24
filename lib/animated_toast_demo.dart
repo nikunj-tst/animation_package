@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:bot_toast/bot_toast.dart';
 
 class ToastManager {
   static final ToastManager _instance = ToastManager._internal();
@@ -24,12 +25,16 @@ class ToastManager {
   void showSuccess(BuildContext context,
       {required String headerMsg,
       required String description,
+      String? successImage,
+      String? failureImage,
       required bool isSuccess,
       void Function()? onTap,
       void Function()? onClose}) {
     ToastMsg.showSuccess(
         isSuccess: isSuccess,
         description: description,
+        failureImage: failureImage,
+        successImage: successImage,
         context: context,
         headerMsg: headerMsg,
         controller: controller,
@@ -44,286 +49,149 @@ class ToastMsg {
     required BuildContext context,
     required String headerMsg,
     required String description,
+    String? successImage,
+    String? failureImage,
     required bool isSuccess,
     required AnimationController controller,
     int duration = 3,
     void Function()? onTap,
     void Function()? onClose,
   }) {
-    ScaffoldMessenger.of(context).showSnackBar(new SnackBar(
-      content: GestureDetector(
-        onTap: onTap,
-        child: Padding(
-          padding: EdgeInsets.only(top: 15, left: 22),
-          child: FutureBuilder(
-            future: Future.delayed(const Duration(milliseconds: 500)),
-            builder: (context, snapshot) {
-              controller.reset();
-              if (snapshot.connectionState == ConnectionState.waiting) {
-                return Row(
-                  mainAxisAlignment: MainAxisAlignment.center,
-                  mainAxisSize: MainAxisSize.min,
-                  children: [
-                    Icon(
-                      isSuccess ? Icons.check : Icons.close,
-                      color: Colors.white,
-                      size: 30,
-                    ),
-                  ],
-                );
-              } else {
-                controller.forward();
+    double screenWidth = MediaQuery.of(context).size.width;
+    double screenHeight = MediaQuery.of(context).size.height;
 
-                return Padding(
-                  padding: EdgeInsets.symmetric(horizontal: 18),
-                  child: Row(
+    BotToast.showCustomNotification(
+      onClose: onClose,
+      duration: Duration(seconds: duration),
+      toastBuilder: (CancelFunc? cancelFunc) {
+        return GestureDetector(
+          onTap: onTap,
+          child: Padding(
+            padding: EdgeInsets.only(
+                top: screenHeight * 0.02, left: screenWidth * 0.05),
+            child: FutureBuilder(
+              future: Future.delayed(const Duration(milliseconds: 500)),
+              builder: (context, snapshot) {
+                controller.reset();
+                if (snapshot.connectionState == ConnectionState.waiting) {
+                  return Row(
                     mainAxisAlignment: MainAxisAlignment.center,
                     mainAxisSize: MainAxisSize.min,
                     children: [
-                      Stack(
-                        clipBehavior: Clip.none,
-                        children: [
-                          AnimatedBuilder(
-                            animation: controller,
-                            builder: (context, child) {
-                              double width = Tween<double>(begin: 0, end: 325)
-                                  .animate(controller)
-                                  .value;
+                      Image.asset(
+                        isSuccess
+                            ? successImage ?? "assets/success_splash.png"
+                            : failureImage ?? "assets/failure_splash.png",
+                        height: screenHeight * 0.07,
+                        width: screenWidth * 0.15,
+                      )
+                    ],
+                  );
+                } else {
+                  controller.forward();
 
-                              return Container(
-                                decoration: BoxDecoration(
-                                    color: Color(
-                                        isSuccess ? 0XFF56A362 : 0XFFD84F56),
-                                    borderRadius: const BorderRadius.all(
-                                        Radius.circular(8))),
-                                height: 67,
-                                width: width,
-                                child: controller.isCompleted
-                                    ? Padding(
-                                        padding: EdgeInsets.symmetric(
-                                            horizontal: 18),
-                                        child: Row(
-                                          mainAxisAlignment:
-                                              MainAxisAlignment.spaceBetween,
-                                          children: [
-                                            Padding(
-                                              padding:
-                                                  EdgeInsets.only(left: 18),
-                                              child: Column(
-                                                mainAxisAlignment:
-                                                    MainAxisAlignment.center,
-                                                crossAxisAlignment:
-                                                    CrossAxisAlignment.start,
-                                                children: [
-                                                  Text(headerMsg,
-                                                      textAlign:
-                                                          TextAlign.start,
-                                                      style: TextStyle(
+                  return Padding(
+                    padding:
+                        EdgeInsets.symmetric(horizontal: screenWidth * 0.05),
+                    child: Row(
+                      mainAxisAlignment: MainAxisAlignment.center,
+                      mainAxisSize: MainAxisSize.min,
+                      children: [
+                        Stack(
+                          clipBehavior: Clip.none,
+                          children: [
+                            AnimatedBuilder(
+                              animation: controller,
+                              builder: (context, child) {
+                                double width = Tween<double>(
+                                        begin: 0, end: screenWidth * 0.8)
+                                    .animate(controller)
+                                    .value;
+
+                                return Container(
+                                  decoration: BoxDecoration(
+                                      color: Color(
+                                          isSuccess ? 0XFF56A362 : 0XFFD84F56),
+                                      borderRadius: const BorderRadius.all(
+                                          Radius.circular(8))),
+                                  height: screenHeight * 0.08,
+                                  width: width,
+                                  child: controller.isCompleted
+                                      ? Padding(
+                                          padding: EdgeInsets.symmetric(
+                                              horizontal: screenWidth * 0.05),
+                                          child: Row(
+                                            mainAxisAlignment:
+                                                MainAxisAlignment.spaceBetween,
+                                            children: [
+                                              Padding(
+                                                padding: EdgeInsets.only(
+                                                    left: screenWidth * 0.05),
+                                                child: Column(
+                                                  mainAxisAlignment:
+                                                      MainAxisAlignment.center,
+                                                  crossAxisAlignment:
+                                                      CrossAxisAlignment.start,
+                                                  children: [
+                                                    Text(
+                                                      headerMsg,
+                                                      style: const TextStyle(
                                                           color: Colors.white,
                                                           fontWeight:
                                                               FontWeight.w600,
-                                                          fontSize: 14)),
-                                                  Text(description,
-                                                      textAlign:
-                                                          TextAlign.start,
-                                                      style: TextStyle(
+                                                          fontSize: 14),
+                                                    ),
+                                                    Text(
+                                                      description,
+                                                      style: const TextStyle(
                                                           color: Colors.white,
                                                           fontWeight:
                                                               FontWeight.w500,
-                                                          fontSize: 10)),
-                                                ],
+                                                          fontSize: 10),
+                                                    ),
+                                                  ],
+                                                ),
                                               ),
-                                            ),
-                                            Align(
-                                                alignment: Alignment.topRight,
-                                                child: Padding(
-                                                  padding:
-                                                      EdgeInsets.only(top: 8),
-                                                  child: Icon(
-                                                    Icons.close,
-                                                    color: Colors.white,
-                                                    size: 30,
-                                                  ),
-                                                ))
-                                          ],
-                                        ),
-                                      )
-                                    : const Text(""),
-                              );
-                            },
-                          ),
-                          Positioned(
-                            left: -25,
-                            top: 5,
-                            child: Icon(
-                              isSuccess ? Icons.check : Icons.close,
-                              color: Colors.white,
-                              size: 30,
+                                              Align(
+                                                  alignment: Alignment.topRight,
+                                                  child: Padding(
+                                                    padding: EdgeInsets.only(
+                                                        top: screenHeight *
+                                                            0.01),
+                                                    child: const Icon(
+                                                        Icons.close,
+                                                        color: Colors.white),
+                                                  ))
+                                            ],
+                                          ),
+                                        )
+                                      : const Text(""),
+                                );
+                              },
                             ),
-                          ),
-                        ],
-                      ),
-                    ],
-                  ),
-                );
-              }
-            },
+                            Positioned(
+                                left: screenWidth * -0.06,
+                                top: screenHeight * 0.007,
+                                child: Image.asset(
+                                  isSuccess
+                                      ? successImage ??
+                                          "assets/success_splash.png"
+                                      : failureImage ??
+                                          "assets/failure_splash.png",
+                                  height: screenHeight * 0.07,
+                                  width: screenWidth * 0.15,
+                                )),
+                          ],
+                        ),
+                      ],
+                    ),
+                  );
+                }
+              },
+            ),
           ),
-        ),
-      ),
-      behavior: SnackBarBehavior.floating,
-      shape: RoundedRectangleBorder(
-        borderRadius: BorderRadius.circular(24),
-      ),
-      margin: EdgeInsets.only(
-          bottom: MediaQuery.of(context).size.height - 100,
-          right: 20,
-          left: 20),
-    ));
-    // BotToast.showCustomNotification(
-    //   onClose: onClose,
-    //   duration: Duration(seconds: duration),
-    //   toastBuilder: (CancelFunc? cancelFunc) {
-    //     return GestureDetector(
-    //       onTap: onTap,
-    //       child: Padding(
-    //         padding: EdgeInsets.only(
-    //             top: MySize.getScaledSizeHeight(15),
-    //             left: MySize.getScaledSizeWidth(22)),
-    //         child: FutureBuilder(
-    //           future: Future.delayed(const Duration(milliseconds: 500)),
-    //           builder: (context, snapshot) {
-    //             controller.reset();
-    //             if (snapshot.connectionState == ConnectionState.waiting) {
-    //               return Row(
-    //                 mainAxisAlignment: MainAxisAlignment.center,
-    //                 mainAxisSize: MainAxisSize.min,
-    //                 children: [
-    //                   CustomSvgPicture(
-    //                     isSuccess
-    //                         ? AppAsset.successSplash
-    //                         : AppAsset.failureSplash,
-    //                     height: MySize.getScaledSizeHeight(55),
-    //                     width: MySize.getScaledSizeWidth(55),
-    //                   )
-    //                 ],
-    //               );
-    //             } else {
-    //               controller.forward();
-    //
-    //               return Padding(
-    //                 padding: EdgeInsets.symmetric(
-    //                     horizontal: MySize.getScaledSizeWidth(18)),
-    //                 child: Row(
-    //                   mainAxisAlignment: MainAxisAlignment.center,
-    //                   mainAxisSize: MainAxisSize.min,
-    //                   children: [
-    //                     Stack(
-    //                       clipBehavior: Clip.none,
-    //                       children: [
-    //                         AnimatedBuilder(
-    //                           animation: controller,
-    //                           builder: (context, child) {
-    //                             double width = Tween<double>(begin: 0, end: 325)
-    //                                 .animate(controller)
-    //                                 .value;
-    //
-    //                             return Container(
-    //                               decoration: BoxDecoration(
-    //                                   color: Color(
-    //                                       isSuccess ? 0XFF56A362 : 0XFFD84F56),
-    //                                   borderRadius: const BorderRadius.all(
-    //                                       Radius.circular(8))),
-    //                               height: MySize.getScaledSizeHeight(67),
-    //                               width: width,
-    //                               child: controller.isCompleted
-    //                                   ? Padding(
-    //                                       padding: EdgeInsets.symmetric(
-    //                                           horizontal:
-    //                                               MySize.getScaledSizeWidth(
-    //                                                   18)),
-    //                                       child: Row(
-    //                                         mainAxisAlignment:
-    //                                             MainAxisAlignment.spaceBetween,
-    //                                         children: [
-    //                                           Padding(
-    //                                             padding: EdgeInsets.only(
-    //                                                 left: MySize
-    //                                                     .getScaledSizeWidth(
-    //                                                         18)),
-    //                                             child: Column(
-    //                                               mainAxisAlignment:
-    //                                                   MainAxisAlignment.center,
-    //                                               crossAxisAlignment:
-    //                                                   CrossAxisAlignment.start,
-    //                                               children: [
-    //                                                 TypoGraphy.text(
-    //                                                     textAlign:
-    //                                                         TextAlign.start,
-    //                                                     headerMsg,
-    //                                                     color:
-    //                                                         ColorConstant.white,
-    //                                                     fontWeight:
-    //                                                         FontWeight.w600,
-    //                                                     fontSize: MySize
-    //                                                         .getScaledSizeHeight(
-    //                                                             14)),
-    //                                                 TypoGraphy.text(
-    //                                                     textAlign:
-    //                                                         TextAlign.start,
-    //                                                     description,
-    //                                                     color:
-    //                                                         ColorConstant.white,
-    //                                                     fontWeight:
-    //                                                         FontWeight.w500,
-    //                                                     fontSize: MySize
-    //                                                         .getScaledSizeHeight(
-    //                                                             10)),
-    //                                               ],
-    //                                             ),
-    //                                           ),
-    //                                           Align(
-    //                                               alignment: Alignment.topRight,
-    //                                               child: Padding(
-    //                                                 padding: EdgeInsets.only(
-    //                                                     top: MySize
-    //                                                         .getScaledSizeHeight(
-    //                                                             8)),
-    //                                                 child:
-    //                                                     const CustomSvgPicture(
-    //                                                         color: ColorConstant
-    //                                                             .white,
-    //                                                         AppAsset.crossIcon),
-    //                                               ))
-    //                                         ],
-    //                                       ),
-    //                                     )
-    //                                   : const Text(""),
-    //                             );
-    //                           },
-    //                         ),
-    //                         Positioned(
-    //                           left: MySize.getScaledSizeWidth(-25),
-    //                           top: MySize.getScaledSizeHeight(5),
-    //                           child: CustomSvgPicture(
-    //                             isSuccess
-    //                                 ? AppAsset.successSplash
-    //                                 : AppAsset.failureSplash,
-    //                             height: MySize.getScaledSizeHeight(55),
-    //                             width: MySize.getScaledSizeWidth(55),
-    //                           ),
-    //                         ),
-    //                       ],
-    //                     ),
-    //                   ],
-    //                 ),
-    //               );
-    //             }
-    //           },
-    //         ),
-    //       ),
-    //     );
-    //   },
-    // );
+        );
+      },
+    );
   }
 }
