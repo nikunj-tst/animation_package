@@ -1,16 +1,16 @@
 import 'package:flutter/material.dart';
 import 'package:bot_toast/bot_toast.dart';
 
-class ToastManager {
-  static final ToastManager _instance = ToastManager._internal();
+class AnimatedToast {
+  static final AnimatedToast _instance = AnimatedToast._internal();
   late AnimationController controller;
   bool isInitialized = false;
 
-  factory ToastManager() {
+  factory AnimatedToast() {
     return _instance;
   }
 
-  ToastManager._internal();
+  AnimatedToast._internal();
 
   void initialize(TickerProvider vsync) {
     if (!isInitialized) {

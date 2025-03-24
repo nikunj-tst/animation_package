@@ -10,12 +10,6 @@
 ```dart
 import 'package:animated_toast_demo/animated_toast_demo.dart';
 
-ToastManager().showSuccess(
-context,
-headerMsg: 'Success',
-description: 'Success Test Toast',
-isSuccess: true,
-);
 
 ```
 

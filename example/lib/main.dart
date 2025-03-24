@@ -35,7 +35,7 @@ class MyHomePage extends StatefulWidget {
 class _MyHomePageState extends State<MyHomePage> with TickerProviderStateMixin {
   @override
   void initState() {
-    ToastManager().initialize(this);
+    AnimatedToast().initialize(this);
     super.initState();
   }
 
@@ -52,7 +52,7 @@ class _MyHomePageState extends State<MyHomePage> with TickerProviderStateMixin {
           children: <Widget>[
             ElevatedButton(
               onPressed: () {
-                ToastManager().showSuccess(
+                AnimatedToast().showSuccess(
                   context,
                   headerMsg: 'Success',
                   description: 'Success Test Toast',
@@ -64,7 +64,7 @@ class _MyHomePageState extends State<MyHomePage> with TickerProviderStateMixin {
             SizedBox(height: 20),
             ElevatedButton(
               onPressed: () {
-                ToastManager().showSuccess(
+                AnimatedToast().showSuccess(
                   context,
                   headerMsg: 'Failed',
                   description: 'Fail Test Toast',
