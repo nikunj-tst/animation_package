@@ -27,6 +27,10 @@ class AnimatedToast {
       required String description,
       String? successImage,
       String? failureImage,
+      Color? successColor,
+      Color? failureColor,
+      Color? headerColor,
+      Color? descriptionColor,
       required bool isSuccess,
       void Function()? onTap,
       void Function()? onClose}) {
@@ -37,6 +41,10 @@ class AnimatedToast {
         successImage: successImage,
         context: context,
         headerMsg: headerMsg,
+        successColor: successColor,
+        failureColor: failureColor,
+        descriptionColor: descriptionColor,
+        headerColor: headerColor,
         controller: controller,
         duration: 3,
         onClose: onClose,
@@ -51,6 +59,10 @@ class ToastMsg {
     required String description,
     String? successImage,
     String? failureImage,
+    Color? successColor,
+    Color? headerColor,
+    Color? descriptionColor,
+    Color? failureColor,
     required bool isSuccess,
     required AnimationController controller,
     int duration = 3,
@@ -110,8 +122,11 @@ class ToastMsg {
 
                                 return Container(
                                   decoration: BoxDecoration(
-                                      color: Color(
-                                          isSuccess ? 0XFF56A362 : 0XFFD84F56),
+                                      color: isSuccess
+                                          ? successColor ??
+                                              const Color(0XFF56A362)
+                                          : failureColor ??
+                                              const Color(0XFFD84F56),
                                       borderRadius: const BorderRadius.all(
                                           Radius.circular(8))),
                                   height: screenHeight * 0.08,
@@ -135,16 +150,19 @@ class ToastMsg {
                                                   children: [
                                                     Text(
                                                       headerMsg,
-                                                      style: const TextStyle(
-                                                          color: Colors.white,
+                                                      style: TextStyle(
+                                                          color: headerColor ??
+                                                              Colors.white,
                                                           fontWeight:
                                                               FontWeight.w600,
                                                           fontSize: 14),
                                                     ),
                                                     Text(
                                                       description,
-                                                      style: const TextStyle(
-                                                          color: Colors.white,
+                                                      style: TextStyle(
+                                                          color:
+                                                              descriptionColor ??
+                                                                  Colors.white,
                                                           fontWeight:
                                                               FontWeight.w500,
                                                           fontSize: 10),
@@ -152,16 +170,16 @@ class ToastMsg {
                                                   ],
                                                 ),
                                               ),
-                                              Align(
-                                                  alignment: Alignment.topRight,
-                                                  child: Padding(
-                                                    padding: EdgeInsets.only(
-                                                        top: screenHeight *
-                                                            0.01),
+                                              GestureDetector(
+                                                onTap: () {
+                                                  cancelFunc!();
+                                                },
+                                                child: Align(
+                                                    alignment: Alignment.center,
                                                     child: const Icon(
                                                         Icons.close,
-                                                        color: Colors.white),
-                                                  ))
+                                                        color: Colors.white)),
+                                              )
                                             ],
                                           ),
                                         )
