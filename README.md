@@ -2,7 +2,7 @@
 "animated_toast_demo" is a Flutter package that provides a simple way to show a toast message with animation.
 
 ## Screenshots
-<img src="https://raw.githubusercontent.com/UdaraWanasinghe/FlutterCarouselSlider/master/screenrecord.gif" height="640em" alt=""/>
+<img src="https://i.postimg.cc/rwC03bnq/5826604684017298095.gif" height="640em" alt=""/>
 
 ## Getting started
 
